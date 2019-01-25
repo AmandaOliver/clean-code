@@ -5,7 +5,7 @@ What do you think clean code is? I would say it’s the practise of “be profes
 Writing clean code is like picking up your trash when leaving the camp. And because of so, we should follow the *Boy Scout Rule*:
 **Leave the camground cleaner than you found it**.
 
-How much time do need to understand what this function does?
+How much time do you need to understand what this function does?
 
 ```javascript
  setStake : function (id (WTF), stake) {
@@ -137,7 +137,7 @@ return transformToUIBet(bet)
 
 ## Do just one thing!
 
-3rd rule: SRP, functions should do just one thing. If you're passing a flag to a function, then you're not:
+Functions should do just one thing. If you're passing a flag to a function, then you're not:
 
 ```javascript
 const createFile = (fileName, isTemporal) => {
@@ -380,7 +380,7 @@ Clean tests follow this 5 rules:
 5. **Timely**: the tests should be written BEFORE the actual code. When doing end-to-end tests, later on they serve as documentation for developers on the details of the behaviour, when doing unit-tests they help building testable code.
 
 
-# Miscelanea
+# Miscelaneous
 
 - Avoid complex conditionals on ifs, extract them to a variable
 - Avoid negative conditionals unless it's existencial (!bets)
