@@ -31,7 +31,7 @@ How much time do need to understand what this function does?
 
 # Naming it's hard!
 
->The name of a variable, function or class should answer all the big questions. It should tell you why does it exists, what it does, and how it is used. If a name requires a comment, then the name does not reveal it's intend.
+The name of a variable, function or class should answer all the big questions. It should tell you why does it exists, what it does, and how it is used. If a name requires a comment, then the name does not reveal it's intend.
 
 Pick one word per abstract concept, and stick to it. For example, if we decide to call to an array of arrays *Matrix*, let's never call that *Table*, even if it's the same.
 
@@ -67,9 +67,10 @@ Should be(using types):
     },
 ```
 
+
 # Functions
 
-## Principle of Least Astonishment (or least WTF)
+## Principle of Least Astonishment (or least WTFs)
 
 Following this principle any function (or class) should implement the behaviours that another programmer could reasonably expect. For example, what do you expect the following function to do?:
 
@@ -161,7 +162,7 @@ function createTempFile(fileName) {
 The same applies for switch statements, use polimorphism instead.
 
 
-## Fewer arguments the better
+## The fewer the better
 
 You should have a good justification for writting a function over 20 lines and for each of the arguments provided to it.
 
@@ -240,23 +241,88 @@ const addITemToCollection = (collection, item) => [...collection, item]
 
 ```
 
-# Miscelanea
 
-- Avoid complex conditionals on ifs, extract them to a variable
-- Avoid negative conditionals unless it's existencial (!bets)
-- Configurable data should be at the higher level
-- Don't be arbitrary, keep patterns
-- Follow proportion scope-name `i` it's ok for a for loop, `StakeBoxWithErrorSubscriptions` is ok as component name as well
-- Use coverage tools for tests
+# Prefer async/await
 
+```javascript
+import { get } from 'request';
+import { writeFile } from 'fs';
 
+get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', (requestErr, response) => {
+  if (requestErr) {
+    console.error(requestErr);
+  } else {
+    writeFile('article.html', response.body, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr);
+      } else {
+        console.log('File written');
+      }
+    });
+  }
+});
+```
 
+It's worse than:
+
+```javascript
+import { get } from 'request-promise';
+import { writeFile } from 'fs-promise';
+
+get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
+  .then((response) => {
+    return writeFile('article.html', response);
+  })
+  .then(() => {
+    console.log('File written');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+```
+
+and this is still worse than:
+
+```javascript
+import { get } from 'request-promise';
+import { writeFile } from 'fs-promise';
+
+async function getCleanCodeArticle() {
+  try {
+    const response = await get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin');
+    await writeFile('article.html', response);
+    console.log('File written');
+  } catch(err) {
+    console.error(err);
+  }
+}
+```
 
 # Formatting
 
 In a project, all the files should follow the same structure, whatever that structure is. If we are collapsing the exports at the end of the files we should do that in all of them and if a function calls another, keep those functions vertically close in the source file.
 
 Ideally, keep the caller right above the callee. We tend to read code from top-to-bottom, like a newspaper. Because of this, make your code read that way.
+
+# Environment
+
+You should be able to run your project with
+```javascript
+   yarn start
+```
+
+test it with
+```javascript
+   yarn test
+```
+
+build a production ready bundle with
+```javascript
+   yarn build
+```
+
+We can have more scripts, of course, but this three (if necessary) should be there. When you start working on a project you should not need to go to package.json and figure out how to run it or test it.
+
 
 # The importance of tests
 
@@ -314,78 +380,11 @@ Clean tests follow this 5 rules:
 5. **Timely**: the tests should be written BEFORE the actual code. When doing end-to-end tests, later on they serve as documentation for developers on the details of the behaviour, when doing unit-tests they help building testable code.
 
 
-# Prefer async/await
+# Miscelanea
 
-```javascript
-import { get } from 'request';
-import { writeFile } from 'fs';
-
-get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin', (requestErr, response) => {
-  if (requestErr) {
-    console.error(requestErr);
-  } else {
-    writeFile('article.html', response.body, (writeErr) => {
-      if (writeErr) {
-        console.error(writeErr);
-      } else {
-        console.log('File written');
-      }
-    });
-  }
-});
-```
-It's worse than:
-
-```javascript
-import { get } from 'request-promise';
-import { writeFile } from 'fs-promise';
-
-get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin')
-  .then((response) => {
-    return writeFile('article.html', response);
-  })
-  .then(() => {
-    console.log('File written');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-```
-
-and this is still worse than:
-
-```javascript
-import { get } from 'request-promise';
-import { writeFile } from 'fs-promise';
-
-async function getCleanCodeArticle() {
-  try {
-    const response = await get('https://en.wikipedia.org/wiki/Robert_Cecil_Martin');
-    await writeFile('article.html', response);
-    console.log('File written');
-  } catch(err) {
-    console.error(err);
-  }
-}
-```
-
-
-
-# Environment
-
-You should be able to run your project with
-```javascript
-   yarn start
-```
-
-test it with
-```javascript
-   yarn test
-```
-
-build a production ready bundle with
-```javascript
-   yarn build
-```
-
-We can have more scripts, of course, but this three (if necessary) should be there. When you start working on a project you should not need to go to package.json and figure out how to run it or test it.
+- Avoid complex conditionals on ifs, extract them to a variable
+- Avoid negative conditionals unless it's existencial (!bets)
+- Configurable data should be at the higher level
+- Don't be arbitrary, keep patterns
+- Follow proportion scope-name `i` it's ok for a for loop, `StakeBoxWithErrorSubscriptions` is ok as component name as well
+- Use coverage tools for tests
